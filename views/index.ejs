@@ -4,82 +4,42 @@
   <meta charset="UTF-8">
   <title>オーディオ変換</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
-
-    .container {
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 350px;
-    }
-
-    h1 {
-      font-size: 22px;
-      margin-bottom: 25px;
-      color: #333;
-    }
-
-    input[type="file"], select {
-      display: block;
-      margin: 15px auto;
-      padding: 8px;
-      width: 100%;
-      font-size: 14px;
-    }
-
-    button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-      width: 100%;
-    }
-
-    button:hover {
-      background-color: #45a049;
-    }
-
-    .download-msg {
-      margin-top: 20px;
-      color: #007bff;
-      font-weight: bold;
-    }
+    body { font-family: Arial; background: #f9f9f9; display: flex; justify-content: center; align-items: center; min-height:100vh; margin:0;}
+    .container { background:#fff; padding:30px 40px; border-radius:10px; box-shadow:0 4px 15px rgba(0,0,0,0.1); text-align:center; width:400px;}
+    h1 { font-size:22px; margin-bottom:25px; color:#333;}
+    input[type="file"], select { display:block; margin:15px auto; padding:8px; width:100%; font-size:14px;}
+    button { background-color:#4CAF50; color:white; border:none; padding:10px 15px; font-size:16px; border-radius:5px; cursor:pointer; transition:0.3s; width:100%;}
+    button:hover { background-color:#45a049;}
+    .download-msg { margin-top:20px; color:#007bff; font-weight:bold;}
+    .format-desc { font-size:13px; color:#555; margin-top:5px;}
+    .file-info { font-size:13px; color:#888; margin-top:15px; text-align:left;}
   </style>
 </head>
 <body>
   <div class="container">
     <h1>オーディオ変換デモ</h1>
+
+    <div class="file-info">
+      <strong>対応入力ファイル：</strong><br>
+      - 音声ファイル: MP3, WAV, OGG, FLAC, AAC, M4A 等<br>
+      - 動画ファイル: MP4, MKV, MOV 等（音声トラックを抽出して変換可能）<br>
+      <strong>注意：</strong>DRM 付きファイルや特殊コーデックは変換できません。
+    </div>
+
     <form action="/convert" method="POST" enctype="multipart/form-data">
       <input type="file" name="file" required>
       <select name="format" required>
-        <option value="mp3">MP3</option>
-        <option value="wav">WAV</option>
-        <option value="ogg">OGG</option>
-        <option value="flac">FLAC</option>
+        <% for(const fmt in formatInfo) { %>
+          <option value="<%= fmt %>"><%= fmt.toUpperCase() %> - <%= formatInfo[fmt] %></option>
+        <% } %>
       </select>
       <button type="submit">変換</button>
     </form>
 
-    <% if (typeof downloadUrl !== 'undefined') { %>
+    <% if(downloadUrl) { %>
       <p class="download-msg">変換完了！自動的にダウンロードが開始されます。</p>
       <a id="downloadLink" href="<%= downloadUrl %>" download style="display:none">Download</a>
-      <script>
-        document.getElementById('downloadLink').click();
-      </script>
+      <script>document.getElementById('downloadLink').click();</script>
     <% } %>
   </div>
 </body>
