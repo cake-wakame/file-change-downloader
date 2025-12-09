@@ -1,11 +1,8 @@
-Build Command：
+Render の Build Command は：
 
-mkdir -p tmp
-apt-get update
-apt-get install -y ffmpeg
 npm install
 
 
-Start Command：
+Start Command は：
 
 node server.js
