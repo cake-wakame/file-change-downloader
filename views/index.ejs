@@ -11,6 +11,7 @@
     button { background-color:#4CAF50; color:white; border:none; padding:10px 15px; font-size:16px; border-radius:5px; cursor:pointer; transition:0.3s; width:100%;}
     button:hover { background-color:#45a049;}
     .download-msg { margin-top:20px; color:#007bff; font-weight:bold;}
+    .error-msg { margin-top:20px; color:#ff3b3b; font-weight:bold;}
     .format-desc { font-size:13px; color:#555; margin-top:5px;}
     .file-info { font-size:13px; color:#888; margin-top:15px; text-align:left;}
   </style>
@@ -21,13 +22,13 @@
 
     <div class="file-info">
       <strong>対応入力ファイル：</strong><br>
-      - 音声ファイル: MP3, WAV, OGG, FLAC, AAC, M4A 等<br>
-      - 動画ファイル: MP4, MKV, MOV 等（音声トラックを抽出して変換可能）<br>
-      <strong>注意：</strong>DRM 付きファイルや特殊コーデックは変換できません。
+      - 音声: MP3, WAV, OGG, FLAC, AAC, M4A 等<br>
+      - 動画: MP4, MKV, MOV 等（音声トラック抽出可能）<br>
+      <strong>注意：</strong>DRM 付きや特殊コーデックは変換不可
     </div>
 
-    <form action="/convert" method="POST" enctype="multipart/form-data">
-      <input type="file" name="file" required>
+    <form id="convertForm" action="/convert" method="POST" enctype="multipart/form-data">
+      <input type="file" id="fileInput" name="file" required>
       <select name="format" required>
         <% for(const fmt in formatInfo) { %>
           <option value="<%= fmt %>"><%= fmt.toUpperCase() %> - <%= formatInfo[fmt] %></option>
@@ -36,11 +37,46 @@
       <button type="submit">変換</button>
     </form>
 
+    <p id="fileWarning" class="error-msg" style="display:none;"></p>
+
     <% if(downloadUrl) { %>
       <p class="download-msg">変換完了！自動的にダウンロードが開始されます。</p>
       <a id="downloadLink" href="<%= downloadUrl %>" download style="display:none">Download</a>
       <script>document.getElementById('downloadLink').click();</script>
     <% } %>
+
+    <% if(errorMsg) { %>
+      <p class="error-msg"><%= errorMsg %></p>
+    <% } %>
   </div>
+
+  <script>
+    const allowedExtensions = ['mp3','wav','ogg','flac','aac','m4a','mp4','mov','mkv'];
+    const fileInput = document.getElementById('fileInput');
+    const warning = document.getElementById('fileWarning');
+    const form = document.getElementById('convertForm');
+
+    fileInput.addEventListener('change', () => {
+      warning.style.display = 'none';
+      if(fileInput.files.length === 0) return;
+      const fileName = fileInput.files[0].name;
+      const ext = fileName.split('.').pop().toLowerCase();
+      if(!allowedExtensions.includes(ext)){
+        warning.textContent = `警告: このファイル形式（.${ext}）はサポートされていません`;
+        warning.style.display = 'block';
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      if(fileInput.files.length === 0) return;
+      const fileName = fileInput.files[0].name;
+      const ext = fileName.split('.').pop().toLowerCase();
+      if(!allowedExtensions.includes(ext)){
+        e.preventDefault();
+        warning.textContent = `変換できないファイル形式のため送信を中止しました`;
+        warning.style.display = 'block';
+      }
+    });
+  </script>
 </body>
 </html>
