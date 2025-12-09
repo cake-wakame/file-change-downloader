@@ -31,7 +31,7 @@ const contentTypeMap = {
 };
 
 // トップページ
-app.get('/', (req, res) => res.render('index', { downloadUrl: null, formatInfo }));
+app.get('/', (req, res) => res.render('index', { downloadUrl: null, formatInfo, errorMsg: null }));
 
 // 変換処理
 app.post('/convert', upload.single('file'), (req, res) => {
@@ -40,11 +40,11 @@ app.post('/convert', upload.single('file'), (req, res) => {
   const outputFilename = `${req.file.filename}.${outputFormat}`;
   const outputPath = path.join(tmpDir, outputFilename);
 
-  // 入力形式を自動判定（ffmpeg -i でエラーにならなければOK）
+  // 入力形式を自動判定
   exec(`"${ffmpegPath}" -i "${inputPath}"`, (err, stdout, stderr) => {
     if (stderr.includes('Invalid data found') || err) {
       fs.unlinkSync(inputPath);
-      return res.status(400).send('この形式は変換できません');
+      return res.render('index', { downloadUrl: null, formatInfo, errorMsg: 'この形式は変換できません' });
     }
 
     // 変換
@@ -53,16 +53,16 @@ app.post('/convert', upload.single('file'), (req, res) => {
       fs.unlinkSync(inputPath); // 元ファイル削除
       if (err2) {
         console.error(stderr2);
-        return res.status(500).send('変換中にエラーが発生しました');
+        return res.render('index', { downloadUrl: null, formatInfo, errorMsg: '変換中にエラーが発生しました' });
       }
 
-      // 5分後に変換ファイルを削除
+      // 5分後に変換ファイル削除
       setTimeout(() => {
         if (fs.existsSync(outputPath)) fs.unlink(outputPath, e => e && console.error(e));
       }, 5*60*1000);
 
       const downloadUrl = `/download/${outputFilename}`;
-      res.render('index', { downloadUrl, formatInfo });
+      res.render('index', { downloadUrl, formatInfo, errorMsg: null });
     });
   });
 });
