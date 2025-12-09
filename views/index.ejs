@@ -39,4 +39,48 @@
 
     button {
       background-color: #4CAF50;
-      colo
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .download-msg {
+      margin-top: 20px;
+      color: #007bff;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>オーディオ変換デモ</h1>
+    <form action="/convert" method="POST" enctype="multipart/form-data">
+      <input type="file" name="file" required>
+      <select name="format" required>
+        <option value="mp3">MP3</option>
+        <option value="wav">WAV</option>
+        <option value="ogg">OGG</option>
+        <option value="flac">FLAC</option>
+      </select>
+      <button type="submit">変換</button>
+    </form>
+
+    <% if (typeof downloadUrl !== 'undefined') { %>
+      <p class="download-msg">変換完了！自動的にダウンロードが開始されます。</p>
+      <a id="downloadLink" href="<%= downloadUrl %>" download style="display:none">Download</a>
+      <script>
+        document.getElementById('downloadLink').click();
+      </script>
+    <% } %>
+  </div>
+</body>
+</html>
