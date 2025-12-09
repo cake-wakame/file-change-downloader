@@ -3,26 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>オーディオ変換</title>
-</head>
-<body>
-  <h1>オーディオ変換デモ (ffmpeg-static, Render対応)</h1>
-  <form action="/convert" method="POST" enctype="multipart/form-data">
-    <input type="file" name="file" required>
-    <select name="format" required>
-      <option value="mp3">MP3</option>
-      <option value="wav">WAV</option>
-      <option value="ogg">OGG</option>
-      <option value="flac">FLAC</option>
-    </select>
-    <button type="submit">変換</button>
-  </form>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
-  <% if (typeof downloadUrl !== 'undefined') { %>
-    <a id="downloadLink" href="<%= downloadUrl %>" download style="display:none">Download</a>
-    <script>
-      document.getElementById('downloadLink').click();
-      alert('変換完了！ 自動的にダウンロードが開始されました。');
-    </script>
-  <% } %>
-</body>
-</html>
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 350px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    input[type="file"], select {
+      display: block;
+      margin: 15px auto;
+      padding: 8px;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      colo
