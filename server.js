@@ -31,9 +31,7 @@ app.post('/convert', upload.single('file'), (req, res) => {
   const command = `${ffmpegPath} -y -i "${inputPath}" "${outputPath}"`;
 
   exec(command, (err, stdout, stderr) => {
-    // 元ファイル削除
-    fs.unlinkSync(inputPath);
-
+    fs.unlinkSync(inputPath); // 元ファイル削除
     if (err) {
       console.error(stderr);
       return res.status(500).send('変換中にエラーが発生しました');
@@ -44,14 +42,11 @@ app.post('/convert', upload.single('file'), (req, res) => {
   });
 });
 
-// ダウンロードストリーム
 app.get('/download/:filename', (req, res) => {
   const filename = req.params.filename;
   const filePath = path.join(tmpDir, filename);
 
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).send('ファイルが存在しません');
-  }
+  if (!fs.existsSync(filePath)) return res.status(404).send('ファイルが存在しません');
 
   const ext = path.extname(filename).substring(1);
   const contentTypeMap = {
@@ -69,9 +64,7 @@ app.get('/download/:filename', (req, res) => {
   filestream.pipe(res);
 
   filestream.on('close', () => {
-    fs.unlink(filePath, (err) => {
-      if (err) console.error('削除エラー:', err);
-    });
+    fs.unlink(filePath, (err) => { if (err) console.error(err); });
   });
 });
 
