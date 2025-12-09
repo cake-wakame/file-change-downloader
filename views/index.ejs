@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>オーディオ変換</title>
+</head>
+<body>
+  <h1>オーディオ変換デモ (ffmpeg, Render対応)</h1>
+  <form action="/convert" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <select name="format" required>
+      <option value="mp3">MP3</option>
+      <option value="wav">WAV</option>
+      <option value="ogg">OGG</option>
+      <option value="flac">FLAC</option>
+    </select>
+    <button type="submit">変換</button>
+  </form>
+
+  <% if (typeof downloadUrl !== 'undefined') { %>
+    <a id="downloadLink" href="<%= downloadUrl %>" download style="display:none">Download</a>
+    <script>
+      document.getElementById('downloadLink').click();
+      alert('変換完了！ 自動的にダウンロードが開始されました。');
+    </script>
+  <% } %>
+</body>
+</html>
